@@ -1,0 +1,10 @@
+node_modules/
+.tools/
+media-review/
+dist/
+.env
+.env.*
+!.env.example
+.vercel
+deliverables/
+

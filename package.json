@@ -1,0 +1,23 @@
+{
+  "name": "sri-sadguru-aadhar-foundation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "node scripts/verify-payment.mjs && vite build && node scripts/build-pages.mjs",
+    "check": "node scripts/check-build.mjs",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
+
