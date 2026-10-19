@@ -160,6 +160,21 @@ h2 {
 .donation-recipient span {
   font-size: 12px;
 }
+.secure-qr-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.secure-qr-canvas-holder {
+  position: relative;
+  display: inline-block;
+  margin: 16px auto 10px;
+  user-select: none;
+  -webkit-user-select: none;
+}
 .donation-qr {
   width: min(100%, 240px);
   max-width: 240px;
@@ -167,15 +182,40 @@ h2 {
   background: white;
   border: 1px solid var(--line);
   border-radius: 10px;
-  margin: 16px auto 10px;
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.secure-qr-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 .qr-download {
-  display: block;
+  display: inline-block;
   color: var(--blue);
   font-weight: 600;
   font-size: 13px;
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+button.qr-download {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 6px 0;
+  font-family: inherit;
+  margin: 0 auto 12px;
+  transition: color 0.2s ease;
+}
+button.qr-download:hover {
+  color: var(--orange);
 }
 .upi-payment .text-link {
   border: 0;

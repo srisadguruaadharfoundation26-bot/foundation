@@ -1,5 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { bankDetails } from "../donation";
+import { QR_PATH_DATA } from "../qr-data";
+
+function SecureDonationQR() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Use devicePixelRatio for crisp rendering on high-DPI screens
+    const dpr = window.devicePixelRatio || 2;
+    const displaySize = 220;
+    canvas.width = displaySize * dpr;
+    canvas.height = displaySize * dpr;
+    canvas.style.width = `${displaySize}px`;
+    canvas.style.height = `${displaySize}px`;
+
+    // Fill clean white background
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Render QR vector path sharply in-memory
+    const scale = (displaySize * dpr) / 54;
+    ctx.save();
+    ctx.scale(scale, scale);
+    ctx.fillStyle = "#000000";
+    ctx.fill(new Path2D(QR_PATH_DATA));
+    ctx.restore();
+  }, []);
+
+  function handleDownload() {
+    const exportCanvas = document.createElement("canvas");
+    exportCanvas.width = 540;
+    exportCanvas.height = 540;
+    const ctx = exportCanvas.getContext("2d");
+    if (!ctx) return;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, 540, 540);
+    ctx.save();
+    ctx.scale(540 / 54, 540 / 54);
+    ctx.fillStyle = "#000000";
+    ctx.fill(new Path2D(QR_PATH_DATA));
+    ctx.restore();
+
+    const link = document.createElement("a");
+    link.download = "Sri-Sadguru-Aadhar-Foundation-Donation-QR.png";
+    link.href = exportCanvas.toDataURL("image/png");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  return (
+    <div
+      className="secure-qr-wrapper"
+      onContextMenu={(e) => e.preventDefault()}
+      onDragStart={(e) => e.preventDefault()}
+    >
+      <div className="secure-qr-canvas-holder">
+        <canvas
+          ref={canvasRef}
+          className="donation-qr"
+          role="img"
+          aria-label="Sri Sadguru Aadhar Foundation donation payment QR"
+        />
+        <div
+          className="secure-qr-shield"
+          title="Sri Sadguru Aadhar Foundation donation QR"
+          aria-hidden="true"
+        />
+      </div>
+      <button
+        type="button"
+        className="qr-download button-link"
+        onClick={handleDownload}
+        aria-label="Download donation QR code image"
+      >
+        Download donation QR ↓
+      </button>
+    </div>
+  );
+}
 
 export default function DonationSection() {
   const [tab, setTab] = useState("upi");
@@ -34,7 +118,10 @@ export default function DonationSection() {
           <span>Companionship</span>
         </div>
       </div>
-      <div className="donation-box">
+      <div
+        className="donation-box"
+        onContextMenu={(e) => e.preventDefault()}
+      >
         <span className="eyebrow">SUPPORT OUR ELDERS</span>
         <h3>Give with a full heart.</h3>
         <p className="donation-recipient">
@@ -71,27 +158,7 @@ export default function DonationSection() {
         {tab === "upi" ? (
           <div className="upi-payment">
             <p>Scan with any UPI app to support our elders.</p>
-            <img
-              className="donation-qr"
-              src="assets/donation-qr-clear.svg"
-              alt="Sri Sadguru Aadhar Foundation donation payment QR provided by the foundation"
-              loading="lazy"
-            />
-            <a
-              className="qr-download"
-              href="assets/donation-qr-clear.svg"
-              download="Sri-Sadguru-Aadhar-Foundation-Donation-QR.svg"
-            >
-              Download donation QR ↓
-            </a>
-            <a
-              className="text-link"
-              href="assets/uco-bank-payment.jpg"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View bank-issued payment card ↗
-            </a>
+            <SecureDonationQR />
             <p className="payment-hint">
               Check the recipient in your UPI app before paying.
             </p>

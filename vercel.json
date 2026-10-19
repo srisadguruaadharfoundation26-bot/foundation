@@ -5,6 +5,18 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/assets/donation-qr:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/assets/uco-bank-payment:path*",
+      "destination": "/",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
