@@ -834,14 +834,12 @@ dialog p {
     height: 300px;
   }
 }
-@media (max-width: 650px) {
+@media (max-width: 768px) {
   .topbar {
-    font-size: 12px;
-    gap: 15px;
+    display: none !important;
   }
-  .topbar > span {
-    max-width: 130px;
-  }
+}
+@media (max-width: 650px) {
   .hero {
     margin: 0px 12px;
     min-height: 720px;
