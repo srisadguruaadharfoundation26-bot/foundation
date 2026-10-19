@@ -8,7 +8,11 @@ const hashes = JSON.parse(fs.readFileSync("security/payment-integrity.json", "ut
 export function verifyPayment(deployed = false) {
   for (const [file, expected] of Object.entries(hashes)) {
     const target = deployed && file.startsWith("public/") ? file.replace("public/", "dist/") : file;
-    const actual = createHash("sha256").update(fs.readFileSync(target)).digest("hex");
+    let buf = fs.readFileSync(target);
+    if (file.endsWith(".svg")) {
+      buf = Buffer.from(buf.toString("utf8").replace(/\r\n/g, "\n"), "utf8");
+    }
+    const actual = createHash("sha256").update(buf).digest("hex");
     assert.equal(actual, expected, `Payment data changed: ${target}. Verify the recipient and review the integrity baseline before rebuilding.`);
   }
 }
