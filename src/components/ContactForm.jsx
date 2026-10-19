@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // Google Apps Script Web App URL loaded from environment variable with fallback
 const GOOGLE_SCRIPT_URL =
   import.meta.env.VITE_GOOGLE_SCRIPT_URL ||
-  "https://script.google.com/macros/s/AKfycbzCHhhZiVT8tOpT0EUuX4MLKfMK0B0oAyEg2nxNpy1p-ROvvj68zYmE2bj5i1Ac2Mj1/exec";
+  "https://script.google.com/macros/s/AKfycbz6KTmGdLNCP1zvCtDedOCezITLqELDK-IlobsuoJam899X_cCwbnUT5q8pijXejpL5/exec";
 
 export default function ContactForm() {
   const [status, setStatus] = useState("idle"); // idle | submitting | success | error
