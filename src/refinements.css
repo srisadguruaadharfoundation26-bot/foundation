@@ -409,37 +409,30 @@ button.qr-download:hover {
 }
 
 /* =========================================================
-   CONTINUOUS PHOTO SLIDESHOW (INFINITE SMOOTH MARQUEE)
+   CONTINUOUS PHOTO SLIDESHOW (INFINITE SMOOTH MARQUEE - FULL END-TO-END)
    ========================================================= */
+.real-gallery {
+  background: #f4f6f9;
+  overflow-x: hidden;
+}
 .continuous-slideshow-wrap {
   position: relative;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow: hidden;
   margin-bottom: 24px;
 }
 .continuous-slider-container {
   position: relative;
   width: 100%;
   overflow: hidden;
-  margin: 14px 0;
-  padding: 6px 0;
+  margin: 12px 0;
+  padding: 4px 0;
 }
-.continuous-slider-container::before,
-.continuous-slider-container::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: clamp(24px, 5vw, 68px);
-  z-index: 4;
-  pointer-events: none;
-}
-.continuous-slider-container::before {
-  left: 0;
-  background: linear-gradient(to right, rgb(240, 245, 251), rgba(240, 245, 251, 0));
-}
-.continuous-slider-container::after {
-  right: 0;
-  background: linear-gradient(to left, rgb(240, 245, 251), rgba(240, 245, 251, 0));
-}
+/* No gradient masks on edges - photos remain 100% visible and unmasked from end to end */
 .continuous-track-wrap {
   display: flex;
   width: max-content;
