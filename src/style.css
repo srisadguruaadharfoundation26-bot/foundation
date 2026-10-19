@@ -29,7 +29,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: clamp(80px, 9vw, 100px);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 body {
   margin: 0px;
@@ -38,7 +38,7 @@ body {
   font-family: "DM Sans", sans-serif;
   line-height: 1.65;
   font-size: 16px;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 a {
   color: inherit;
@@ -101,6 +101,9 @@ em {
   font-size: 12px;
 }
 header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   padding: 20px 5%;
   display: flex;
   align-items: center;
@@ -774,7 +777,9 @@ dialog p {
 }
 @media (max-width: 950px) {
   header {
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
   }
   .menu {
     display: block;
