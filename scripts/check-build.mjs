@@ -43,6 +43,8 @@ for (const file of walk("src").filter((name) => name.endsWith(".jsx"))) {
 }
 assert(fs.existsSync("dist/_headers"), "Static host security headers missing");
 assert(fs.existsSync("dist/.htaccess"), "Apache security headers missing");
+assert(fs.existsSync("dist/robots.txt"), "robots.txt missing");
+assert(fs.existsSync("dist/sitemap.xml"), "sitemap.xml missing");
 const media = JSON.parse(fs.readFileSync("src/media.json", "utf8"));
 for (const item of [...media.photos, ...media.videos]) {
   assert(
