@@ -1,4 +1,8 @@
 /* A calm, consistent presentation for the foundation's own media. */
+/* Keep the shared header stable while only page content fades between routes. */
+main { animation: page-arrive 180ms ease-out both; }
+main:focus { outline: none; }
+@keyframes page-arrive { from { opacity: 0; } to { opacity: 1; } }
 .topbar { align-items: center; gap: 16px; flex-wrap: wrap; }
 .topbar > div { min-width: 0; }
 .topbar a { overflow-wrap: anywhere; }

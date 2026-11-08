@@ -21,3 +21,9 @@ Production pages were checked at widths 320, 360, 390, 768, 1024, 1280 and 1920:
 ## Updating photos
 
 After changing `src/media.json`, run `python scripts/optimize-media.py` with Pillow installed. The generated previews and `src/image-assets.json` are included in the project; deployment builds require only Node/npm. Then run `npm run build` and `npm run check`.
+
+## Page transitions
+
+Internal links now change the React page without reloading the document. Destination modules are cached and preloaded on hover/focus, with preloading skipped for data-saving/2G connections. The shared header stays mounted while content fades out for 90ms and in for 180ms. Reduced-motion preferences disable both animations. Rapid clicks cancel the previous pending transition; failed module loads fall back to ordinary navigation. The five generated HTML entry files still support direct visits and refreshes on static hosting.
+
+Browser history preserves per-entry scroll positions, active navigation and page titles update, and cross-page donation/healthcare links scroll to their section after content mounts. New-tab/modifier clicks, downloads, external links and form submissions retain normal browser behavior. Desktop/mobile navigation, rapid successive links, back/forward and cross-page donation anchors were checked with no console errors. No native View Transition overlay is used, because it blocked rapid navigation clicks in testing.

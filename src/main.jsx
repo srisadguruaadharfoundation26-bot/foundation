@@ -1,5 +1,6 @@
-import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
+import React, { Suspense, createContext, lazy, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { flushSync } from "react-dom";
 import media from "./media.json";
 import "./style.css";
 import "./refinements.css";
@@ -11,40 +12,58 @@ const links = [
   ["gallery.html", "Gallery"],
   ["contact.html", "Contact us"],
 ];
-const pages = {
-  index: lazy(() => import("./pages/HomePage")),
-  about: lazy(() => import("./pages/AboutPage")),
-  services: lazy(() => import("./pages/ServicesPage")),
-  gallery: lazy(() => import("./pages/GalleryPage")),
-  contact: lazy(() => import("./pages/ContactPage")),
+const pageLoaders = {
+  index: () => import("./pages/HomePage"),
+  about: () => import("./pages/AboutPage"),
+  services: () => import("./pages/ServicesPage"),
+  gallery: () => import("./pages/GalleryPage"),
+  contact: () => import("./pages/ContactPage"),
 };
-const requestedPage =
-  location.pathname
-    .split("/")
-    .filter(Boolean)
-    .at(-1)
-    ?.replace(/\.html$/, "") || "index";
-const pageName = Object.hasOwn(pages, requestedPage) ? requestedPage : "index";
-const CurrentPage = pages[pageName];
+const loadedPages = {};
+const pagePromises = {};
+function loadPage(name) {
+  if (!pagePromises[name]) {
+    pagePromises[name] = pageLoaders[name]().then((module) => {
+      loadedPages[name] = module.default;
+      return module;
+    }).catch((error) => { delete pagePromises[name]; throw error; });
+  }
+  return pagePromises[name];
+}
+const pages = Object.fromEntries(Object.keys(pageLoaders).map((name) => [name, lazy(() => loadPage(name))]));
+const pageFor = (url) => url.pathname.split("/").filter(Boolean).at(-1)?.replace(/\.html$/, "") || "index";
+const initialPage = pageFor(new URL(location.href));
+const NavigationContext = createContext("index");
+const pageTitle = (name) => `${links.find(([href]) => href === `${name}.html`)?.[1] || "Home"} | Sri Sadguru Aadhar Foundation`;
+let pageKeyCounter = 0;
+const newPageKey = () => `page-${Date.now().toString(36)}-${++pageKeyCounter}`;
 const scrollBehavior = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
 
-function PageContent(props) {
-  useEffect(() => {
-    // Run after the lazy page commits, so cross-page donation/gallery anchors exist.
+function PageContent({ route, ...props }) {
+  const CurrentPage = loadedPages[route.name] || pages[route.name];
+  useLayoutEffect(() => {
     let id;
     try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
-    if (id) document.getElementById(id)?.scrollIntoView({ behavior: "instant", block: "start" });
+    if (route.scroll != null) window.scrollTo({ top: route.scroll, behavior: "instant" });
+    else if (id) document.getElementById(id)?.scrollIntoView({ behavior: "instant", block: "start" });
+    else window.scrollTo({ top: 0, behavior: "instant" });
+    if (route.focus) {
+      const main = document.querySelector("main");
+      main?.setAttribute("tabindex", "-1");
+      main?.focus({ preventScroll: true });
+    }
   }, []);
   return <CurrentPage {...props} />;
 }
 
 function Brand() {
+  const pageName = useContext(NavigationContext);
   function handleClick(e) {
-    if (pageName === "index") {
+    if (pageName === "index" && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: scrollBehavior() });
       if (location.hash) {
-        history.replaceState(null, "", "index.html");
+        history.replaceState(history.state, "", "index.html");
       }
     }
   }
@@ -59,6 +78,7 @@ function Brand() {
 }
 
 function NavigationLinks() {
+  const pageName = useContext(NavigationContext);
   return links.map(([href, label]) => {
     const linkPage = href.replace(".html", "");
     const isCurrent = linkPage === pageName;
@@ -68,11 +88,11 @@ function NavigationLinks() {
         key={href}
         aria-current={isCurrent ? "page" : undefined}
         onClick={(e) => {
-          if (isCurrent) {
+          if (isCurrent && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: scrollBehavior() });
             if (location.hash) {
-              history.replaceState(null, "", href);
+              history.replaceState(history.state, "", href);
             }
           }
         }}
@@ -97,6 +117,7 @@ const foundationFilms = [
 ];
 
 function App() {
+  const [route, setRoute] = useState({ name: Object.hasOwn(pages, initialPage) ? initialPage : "index", key: "initial" });
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalItem, setModalItem] = useState(null); // { type: 'image' | 'video', src, caption/title, poster }
   const [scrolled, setScrolled] = useState(false);
@@ -105,6 +126,111 @@ function App() {
   const menuButton = useRef(null);
   const headerRef = useRef(null);
   const lastMediaTrigger = useRef(null);
+
+  useEffect(() => {
+    let activeKey = history.state?.foundationPageKey || newPageKey();
+    history.replaceState({ ...history.state, foundationPageKey: activeKey }, "");
+    const positions = new Map();
+    let sequence = 0;
+    let disposed = false;
+    let leavingAnimation;
+    const previousRestoration = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+
+    function destination(link) {
+      if (!link || link.target === "_blank" || link.hasAttribute("download") || link.relList.contains("external")) return null;
+      const url = new URL(link.href, location.href);
+      const name = pageFor(url);
+      const directory = new URL(".", location.href).pathname;
+      if (url.origin !== location.origin || new URL(".", url).pathname !== directory || !Object.hasOwn(pages, name) || url.search !== location.search) return null;
+      return { url, name };
+    }
+
+    async function navigate(url, name, popped = false, entryKey) {
+      const request = ++sequence;
+      leavingAnimation?.cancel();
+      positions.set(activeKey, window.scrollY);
+      try { await loadPage(name); } catch {
+        if (!disposed && request === sequence) location.assign(url.href);
+        return;
+      }
+      if (disposed || request !== sequence) return;
+      const main = document.querySelector("main");
+      if (main?.animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        leavingAnimation = main.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 90, easing: "ease-out", fill: "forwards" });
+        await leavingAnimation.finished.catch(() => {});
+        if (disposed || request !== sequence) return;
+      }
+      const key = entryKey || newPageKey();
+      const update = () => {
+        if (disposed || request !== sequence) return;
+        if (!popped) history.pushState({ foundationPageKey: key }, "", url.href);
+        else if (!entryKey) history.replaceState({ ...history.state, foundationPageKey: key }, "");
+        activeKey = key;
+        document.querySelectorAll("video").forEach((video) => video.pause());
+        document.title = pageTitle(name);
+        flushSync(() => {
+          setMenuOpen(false);
+          setModalItem(null);
+          setRoute({ name, key: `${key}-${request}`, scroll: popped ? positions.get(key) : undefined, focus: !popped });
+        });
+      };
+      const outgoing = leavingAnimation;
+      update();
+      outgoing?.cancel();
+      if (leavingAnimation === outgoing) leavingAnimation = undefined;
+    }
+
+    function click(event) {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const next = destination(event.target.closest("a"));
+      if (!next) return;
+      if (next.name === pageFor(new URL(location.href))) {
+        let id;
+        try { id = decodeURIComponent(next.url.hash.slice(1)); } catch { return; }
+        const target = id && document.getElementById(id);
+        if (!target) return;
+        event.preventDefault();
+        positions.set(activeKey, window.scrollY);
+        if (next.url.hash !== location.hash) {
+          activeKey = newPageKey();
+          history.pushState({ foundationPageKey: activeKey }, "", next.url.hash);
+        }
+        target.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+        if (id === "main") { target.setAttribute("tabindex", "-1"); target.focus({ preventScroll: true }); }
+        setMenuOpen(false);
+        return;
+      }
+      event.preventDefault();
+      navigate(next.url, next.name);
+    }
+    function prefetch(event) {
+      if (navigator.connection?.saveData || /(^|-)2g$/.test(navigator.connection?.effectiveType || "")) return;
+      const next = destination(event.target.closest("a"));
+      if (next) loadPage(next.name).catch(() => {});
+    }
+    function pop(event) {
+      const url = new URL(location.href);
+      const name = pageFor(url);
+      if (!Object.hasOwn(pages, name)) return;
+      if (event.state?.foundationPageKey === activeKey) return;
+      navigate(url, name, true, event.state?.foundationPageKey);
+    }
+    document.addEventListener("click", click);
+    document.addEventListener("pointerover", prefetch, { passive: true });
+    document.addEventListener("focusin", prefetch);
+    window.addEventListener("popstate", pop);
+    return () => {
+      disposed = true;
+      sequence++;
+      leavingAnimation?.cancel();
+      history.scrollRestoration = previousRestoration;
+      document.removeEventListener("click", click);
+      document.removeEventListener("pointerover", prefetch);
+      document.removeEventListener("focusin", prefetch);
+      window.removeEventListener("popstate", pop);
+    };
+  }, []);
 
   const photoIndex =
     modalItem && modalItem.type === "image"
@@ -135,58 +261,6 @@ function App() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: scrollBehavior() });
   };
-
-  useEffect(() => {
-    // If there is an explicit hash on load/hashchange, scroll to that section.
-    const scrollToFragment = () => {
-      let id;
-      try {
-        id = decodeURIComponent(location.hash.slice(1));
-      } catch {
-        return;
-      }
-      if (id) {
-        const el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: "instant", block: "start" });
-        }
-      }
-    };
-    // Initial scrolling happens in PageContent after its lazy page has mounted.
-    window.addEventListener("hashchange", scrollToFragment);
-    return () => {
-      window.removeEventListener("hashchange", scrollToFragment);
-    };
-  }, []);
-
-  // Global smooth scrolling for all in-page hash anchor links
-  useEffect(() => {
-    function handleAnchorClick(event) {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const link = event.target.closest("a");
-      if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
-      const href = link.getAttribute("href");
-      if (!href) return;
-
-      const url = new URL(href, location.href);
-      const normalize = (path) => path.replace(/index\.html$/, "");
-      if (url.origin !== location.origin || normalize(url.pathname) !== normalize(location.pathname) || url.search !== location.search) return;
-      let targetId;
-      try { targetId = decodeURIComponent(url.hash.slice(1)); } catch { return; }
-
-      if (targetId) {
-        const targetElement = document.getElementById(targetId);
-        if (targetElement) {
-          event.preventDefault();
-          targetElement.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
-          history.pushState(null, "", `#${targetId}`);
-          setMenuOpen(false);
-        }
-      }
-    }
-    document.addEventListener("click", handleAnchorClick);
-    return () => document.removeEventListener("click", handleAnchorClick);
-  }, []);
 
   // Close mobile navigation menu on outside click
   useEffect(() => {
@@ -286,7 +360,7 @@ function App() {
   }
 
   return (
-    <>
+    <NavigationContext.Provider value={route.name}>
       <a className="skip" href="#main">
         Skip to content
       </a>
@@ -320,33 +394,19 @@ function App() {
           <NavigationLinks />
           <a
             href="index.html#for-healthcare"
-            onClick={(e) => {
-              if (pageName === "index") {
-                e.preventDefault();
-                document.getElementById("for-healthcare")?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
-                history.pushState(null, "", "#for-healthcare");
-              }
-            }}
           >
             For Healthcare
           </a>
           <a
             className="button green"
             href="index.html#donate"
-            onClick={(e) => {
-              if (pageName === "index") {
-                e.preventDefault();
-                document.getElementById("donate")?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
-                history.pushState(null, "", "#donate");
-              }
-            }}
           >
             Donate with love
           </a>
         </nav>
       </header>
       <Suspense fallback={<main id="main" className="section" role="status">Loading page…</main>}>
-        <PageContent onOpenImage={openImage} onOpenVideo={openVideo} />
+        <PageContent key={route.key} route={route} onOpenImage={openImage} onOpenVideo={openVideo} />
       </Suspense>
       {showScrollTop && (
         <button
@@ -483,7 +543,7 @@ function App() {
           </div>
         )}
       </dialog>
-    </>
+    </NavigationContext.Provider>
   );
 }
 
