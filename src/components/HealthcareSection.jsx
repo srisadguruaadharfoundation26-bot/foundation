@@ -19,7 +19,9 @@ export default function HealthcareSection() {
           </div>
           <img
             className="healthcare-photo"
-            src="assets/fhc-care.png"
+            src="assets/optimized/fhc-care.webp"
+            width="954"
+            height="1122"
             alt="FOR HEALTH CARE home nursing and elderly support"
             loading="lazy"
           />

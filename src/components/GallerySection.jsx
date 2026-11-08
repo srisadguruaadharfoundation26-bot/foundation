@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import media from "../media.json";
+import imageAssets from "../image-assets.json";
+
+function previewProps(photo) {
+  const asset = imageAssets[photo.src];
+  return { src: asset?.src || photo.src, srcSet: asset?.srcSet, sizes: "(max-width: 760px) 220px, 280px", decoding: "async" };
+}
 
 function FoundationVideo({ src, title, poster, onPlay }) {
   const [failed, setFailed] = useState(false);
@@ -56,7 +62,7 @@ function ContinuousVideoSlideshow({ onOpenVideo }) {
         const container = reelRef.current;
         const targetLeft =
           activeEl.offsetLeft - (container.clientWidth - activeEl.clientWidth) / 2;
-        container.scrollTo({ left: targetLeft, behavior: "smooth" });
+        container.scrollTo({ left: targetLeft, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
       }
     }
   }, [active]);
@@ -123,17 +129,15 @@ function ContinuousVideoSlideshow({ onOpenVideo }) {
       <div className="video-reel-label">
         <span>Continuous video reel · Click any clip to play</span>
       </div>
-      <div className="video-reel-strip" ref={reelRef} role="tablist" aria-label="Select foundation video">
+      <div className="video-reel-strip" ref={reelRef} role="group" aria-label="Select foundation video">
         {films.map((film, index) => (
           <button
             key={film.src}
             type="button"
-            role="tab"
-            aria-selected={active === index}
+            aria-pressed={active === index}
             className={`video-reel-item ${active === index ? "active" : ""}`}
             onClick={() => {
               setActive(index);
-              setIsAutoPlaying(false);
             }}
           >
             <div className="video-reel-thumb">
@@ -152,8 +156,28 @@ function ContinuousVideoSlideshow({ onOpenVideo }) {
 
 export default function GallerySection({ onOpenImage, onOpenVideo, full = false }) {
   const [category, setCategory] = useState("all");
-  const [viewMode, setViewMode] = useState("slideshow"); // 'slideshow' | 'grid'
+  const viewMode = "slideshow";
   const [isPaused, setIsPaused] = useState(false);
+  const [offscreen, setOffscreen] = useState(true);
+  const [pageHidden, setPageHidden] = useState(document.hidden);
+  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const slideshowRef = useRef(null);
+  const motionPaused = isPaused || offscreen || pageHidden || reducedMotion;
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotion = () => setReducedMotion(query.matches);
+    const updateVisibility = () => setPageHidden(document.hidden);
+    query.addEventListener("change", updateMotion);
+    document.addEventListener("visibilitychange", updateVisibility);
+    const observer = new IntersectionObserver(([entry]) => setOffscreen(!entry.isIntersecting));
+    if (slideshowRef.current) observer.observe(slideshowRef.current);
+    return () => {
+      observer.disconnect();
+      query.removeEventListener("change", updateMotion);
+      document.removeEventListener("visibilitychange", updateVisibility);
+    };
+  }, []);
 
   const selected = media.photos;
 
@@ -162,13 +186,16 @@ export default function GallerySection({ onOpenImage, onOpenVideo, full = false 
       ? selected
       : selected.filter((photo) => photo.category === category);
 
-  // Divide photos into 4 continuous rows for a full panoramic gallery wall
-  const row1 = photos.filter((_, i) => i % 4 === 0);
-  const row2 = photos.filter((_, i) => i % 4 === 1);
-  const row3 = photos.filter((_, i) => i % 4 === 2);
-  const row4 = photos.filter((_, i) => i % 4 === 3);
+  // Keep the new uploads in their own first row and preserve the original rows.
+  const featuredPhotos = photos.filter((photo) => photo.featuredRow);
+  const existingPhotos = photos.filter((photo) => !photo.featuredRow);
+  const row1 = existingPhotos.filter((_, i) => i % 4 === 0);
+  const row2 = existingPhotos.filter((_, i) => i % 4 === 1);
+  const row3 = existingPhotos.filter((_, i) => i % 4 === 2);
+  const row4 = existingPhotos.filter((_, i) => i % 4 === 3);
 
   const photoRows = [
+    { key: "new-photos", items: featuredPhotos, trackClass: "continuous-track speed-1" },
     { key: "row-1", items: row1, trackClass: "continuous-track speed-1" },
     { key: "row-2", items: row2, trackClass: "continuous-track speed-2" },
     { key: "row-3", items: row3, trackClass: "continuous-track speed-3" },
@@ -239,14 +266,15 @@ export default function GallerySection({ onOpenImage, onOpenVideo, full = false 
         </div>
       )}
 
-      {/* Continuous Loop 4-Row Slideshow View */}
+      {/* New photos first, followed by the existing slideshow rows. */}
       {viewMode === "slideshow" ? (
         <div
-          className={`continuous-slideshow-wrap ${isPaused ? "paused" : ""}`}
-          aria-label="Continuous 4-row photo slideshow"
+          ref={slideshowRef}
+          className={`continuous-slideshow-wrap ${motionPaused ? "paused" : ""}`}
+          aria-label={`Continuous ${photoRows.length}-row photo slideshow`}
         >
           {photoRows.map((row) => (
-            <div className="continuous-slider-container" key={row.key}>
+            <div className="continuous-slider-container" key={row.key} data-photo-row={row.key}>
               <div className={`continuous-track-wrap ${isPaused ? "paused" : ""}`}>
                 <div className={row.trackClass}>
                   {row.items.map((photo, index) => (
@@ -257,7 +285,7 @@ export default function GallerySection({ onOpenImage, onOpenVideo, full = false 
                       onClick={() => onOpenImage({ src: photo.src, caption: photo.caption })}
                       aria-label={`View photo ${media.photos.indexOf(photo) + 1}`}
                     >
-                      <img src={photo.src} width="320" height="220" loading="lazy" alt="" />
+                      <img {...previewProps(photo)} width={photo.width} height={photo.height} loading="lazy" alt="" />
                     </button>
                   ))}
                 </div>
@@ -271,7 +299,7 @@ export default function GallerySection({ onOpenImage, onOpenVideo, full = false 
                       key={`${row.key}-b-${photo.src}-${index}`}
                       onClick={() => onOpenImage({ src: photo.src, caption: photo.caption })}
                     >
-                      <img src={photo.src} width="320" height="220" loading="lazy" alt="" />
+                      <img {...previewProps(photo)} width={photo.width} height={photo.height} loading="lazy" alt="" />
                     </button>
                   ))}
                 </div>

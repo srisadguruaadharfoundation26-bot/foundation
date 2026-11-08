@@ -35,7 +35,9 @@ const pages = [
   },
 ];
 
-const template = fs.readFileSync("dist/index.html", "utf8").replace(
+const fontPreloads = fs.readdirSync("dist/assets").filter((name) => name.endsWith(".woff2") && /^(manrope|dm-sans)-/.test(name))
+  .map((name) => `<link rel="preload" href="./assets/${name}" as="font" type="font/woff2" crossorigin>`).join("\n");
+const template = fs.readFileSync("dist/index.html", "utf8").replace("</head>", `${fontPreloads}\n</head>`).replace(
   /<(script|link)\b[^>]*(?:src|href)="(\.\/assets\/[^" ]+\.(?:js|css))"[^>]*>/g,
   (tag, _element, url) => {
     const integrity = createHash("sha384").update(fs.readFileSync(`dist/${url}`)).digest("base64");

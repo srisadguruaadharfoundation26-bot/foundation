@@ -17,10 +17,14 @@ export default function GalleryPage({ onOpenImage, onOpenVideo }) {
       </section>
       <GallerySection onOpenImage={onOpenImage} onOpenVideo={onOpenVideo} full />
       <section className="section brochure">
-        <img src="assets/care-brochure.png" alt="Foundation care brochure" />
+        <img src="assets/care-brochure.png" width="595" height="842" alt="Foundation care brochure" loading="lazy" decoding="async" />
         <img
           src="assets/services-brochure.png"
+          width="595"
+          height="842"
           alt="Foundation service brochure"
+          loading="lazy"
+          decoding="async"
         />
       </section>
     </main>

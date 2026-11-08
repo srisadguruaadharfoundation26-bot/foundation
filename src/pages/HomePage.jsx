@@ -9,7 +9,7 @@ export default function HomePage({ onOpenImage, onOpenVideo }) {
   return (
     <main id="main">
       <section className="hero background-image-hero" id="hero">
-        <img className="hero-background" src="assets/care.jpg" width="1180" height="945" alt="An elderly couple enjoying time in a garden" fetchPriority="high" />
+        <img className="hero-background" src="assets/inauguration-original.jpg" width="1280" height="853" alt="Ribbon-cutting ceremony at Sri Sadguru Aadhar Foundation" fetchPriority="high" />
         <div className="hero-copy">
           <span className="eyebrow">SRI SADGURU AADHAR FOUNDATION</span>
           <h1>

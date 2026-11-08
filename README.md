@@ -1,6 +1,8 @@
 # Sri Sadguru Aadhar Foundation
 
-Complete frontend-only React/Vite website reproduced from the accessible client reference. No backend, login, credentials, analytics, or collection of donor information.
+Static React/Vite website reproduced from the client reference. No application server or database is required for hosting. The contact form uses the separately configured Google Apps Script service; no private credentials belong in frontend source.
+
+For the latest performance changes and validation scope, see `PERFORMANCE.md`. Run `npm run check` after building; this also verifies contact response/error handling without sending messages. The current contact form uses the configured Google Apps Script service and only shows success after that service acknowledges receipt.
 
 Foundation copy uses only the supplied reference website. See `CONTENT-SOURCES.md` for the content review and the client-requested additions. The live reference required login during the 10 October review; previously saved captures of its five pages were used.
 
@@ -29,11 +31,11 @@ For hosting that builds from source, set the build command to `npm run build` an
 
 The build generates `index.html`, `about.html`, `services.html`, `gallery.html`, and `contact.html`; these can be opened directly through a static server without SPA rewrites. Test by serving with `npm run preview`, not by opening HTML through `file://`.
 
-## Media update — 9 October 2026
+## Media update — 8 November 2026
 
-The gallery includes all 47 supplied JPEG photos, grouped into 23 spaces and 24 community moments. All five supplied videos appear together in a selectable playlist above the photos on both the home and gallery pages. Selecting another video replaces the current player, so two videos cannot play audio together. The home page shows six representative photos with a link to the complete gallery. Photo filters, a full-resolution viewer, previous/next buttons, and keyboard arrows are included. The hero uses the garden image as its full background, with a responsive gradient for readable text.
+The gallery contains 56 unique client photos (25 spaces and 31 community moments) in five continuous rows, plus five selectable videos. The newest photos appear in the top row. Filters, a full-resolution viewer, previous/next buttons and keyboard arrows are included. Small WebP previews are separate from the untouched originals. The home hero uses the original inauguration photograph; the other page title banners use the supplied garden image.
 
-The home and Contact us pages include a contact form with required first name, last name, mobile number and email fields. Names, email and phone input are validated; the website prepares a visible enquiry draft and a WhatsApp link to the foundation's existing number. The visitor reviews and sends the message in WhatsApp. The form does not post to a server, store personal details, or claim an enquiry has been delivered. Editing a field clears the prepared draft to prevent sending stale details.
+Contact forms include first name, last name, mobile, email and an optional message. Submissions are sent to the configured Google Apps Script endpoint. Success requires a readable JSON acknowledgement; failures preserve the entered details and offer a WhatsApp fallback. The endpoint must permit CORS and return a success result after recording the enquiry. Delivery was not tested against the live service during the performance review.
 
 JPEG files retain their original bytes and resolution. Videos are MP4 files with their indexes moved to the beginning for progressive playback; their picture/audio streams were copied without recompression. Native controls support fullscreen and inline mobile playback. Videos load when requested rather than all downloading on page load. The main film's original resolution is 464 × 832; no artificial detail or HD quality is claimed. Hosting should support HTTP byte-range requests for video seeking (Vercel, Netlify, Cloudflare Pages, and ordinary Apache static hosting generally do).
 

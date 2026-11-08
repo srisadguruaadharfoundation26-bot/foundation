@@ -51,6 +51,9 @@ export default function ContactSection() {
           <a className="phone" href="tel:+918197526597">
             +91 81975 26597
           </a>
+          <a className="phone" href="tel:+919591251111">
+            +91 95912 51111
+          </a>
         </div>
         <div>
           <span>EMAIL US DIRECTLY</span>

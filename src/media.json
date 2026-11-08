@@ -1,330 +1,410 @@
 {
   "photos": [
     {
-      "src": "assets/foundation/photo-01.jpeg",
+      "src": "assets/foundation/event-2026-11-08-01.jpg",
       "caption": "Photo 01",
-      "category": "spaces",
-      "width": 1201,
-      "height": 1600
+      "category": "community",
+      "width": 1280,
+      "height": 853,
+      "featuredRow": true
     },
     {
-      "src": "assets/foundation/photo-02.jpeg",
+      "src": "assets/foundation/event-2026-11-08-02.jpg",
       "caption": "Photo 02",
-      "category": "spaces",
-      "width": 1600,
-      "height": 1201
+      "category": "community",
+      "width": 1280,
+      "height": 853,
+      "featuredRow": true
     },
     {
-      "src": "assets/foundation/photo-03.jpeg",
+      "src": "assets/foundation/event-2026-11-08-03.jpg",
       "caption": "Photo 03",
-      "category": "spaces",
-      "width": 1600,
-      "height": 1201
+      "category": "community",
+      "width": 1280,
+      "height": 853,
+      "featuredRow": true
     },
     {
-      "src": "assets/foundation/photo-04.jpeg",
+      "src": "assets/foundation/event-2026-11-08-04.jpg",
       "caption": "Photo 04",
-      "category": "spaces",
-      "width": 1600,
-      "height": 1201
+      "category": "community",
+      "width": 1280,
+      "height": 853,
+      "featuredRow": true
     },
     {
-      "src": "assets/foundation/photo-05.jpeg",
+      "src": "assets/foundation/event-2026-11-08-05.jpg",
       "caption": "Photo 05",
-      "category": "spaces",
-      "width": 1600,
-      "height": 1201
+      "category": "community",
+      "width": 1280,
+      "height": 853,
+      "featuredRow": true
     },
     {
-      "src": "assets/foundation/photo-06.jpeg",
+      "src": "assets/foundation/latest-01.jpg",
       "caption": "Photo 06",
+      "category": "community",
+      "width": 1280,
+      "height": 853,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/latest-02.jpg",
+      "caption": "Photo 07",
       "category": "spaces",
-      "width": 1600,
-      "height": 1201
+      "width": 853,
+      "height": 1280,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/latest-03.jpg",
+      "caption": "Photo 08",
+      "category": "community",
+      "width": 1280,
+      "height": 853,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/latest-04.jpg",
+      "caption": "Photo 09",
+      "category": "community",
+      "width": 1280,
+      "height": 853,
+      "featuredRow": true
     },
     {
       "src": "assets/foundation/photo-07.jpeg",
-      "caption": "Photo 07",
+      "caption": "Photo 10",
+      "category": "spaces",
+      "width": 1600,
+      "height": 1201,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/photo-04.jpeg",
+      "caption": "Photo 11",
+      "category": "spaces",
+      "width": 1600,
+      "height": 1201,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/latest-07.jpg",
+      "caption": "Photo 12",
+      "category": "community",
+      "width": 1280,
+      "height": 853,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/photo-05.jpeg",
+      "caption": "Photo 13",
+      "category": "spaces",
+      "width": 1600,
+      "height": 1201,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/latest-09.jpg",
+      "caption": "Photo 14",
+      "category": "spaces",
+      "width": 1280,
+      "height": 960,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/photo-03.jpeg",
+      "caption": "Photo 15",
+      "category": "spaces",
+      "width": 1600,
+      "height": 1201,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/photo-06.jpeg",
+      "caption": "Photo 16",
+      "category": "spaces",
+      "width": 1600,
+      "height": 1201,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/photo-01.jpeg",
+      "caption": "Photo 17",
+      "category": "spaces",
+      "width": 1201,
+      "height": 1600,
+      "featuredRow": true
+    },
+    {
+      "src": "assets/foundation/photo-02.jpeg",
+      "caption": "Photo 18",
       "category": "spaces",
       "width": 1600,
       "height": 1201
     },
     {
       "src": "assets/foundation/photo-08.jpeg",
-      "caption": "Photo 08",
-      "category": "spaces",
-      "width": 1201,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-09.jpeg",
-      "caption": "Photo 09",
-      "category": "spaces",
-      "width": 1232,
-      "height": 1448
-    },
-    {
-      "src": "assets/foundation/photo-10.jpeg",
-      "caption": "Photo 10",
-      "category": "spaces",
-      "width": 1232,
-      "height": 1595
-    },
-    {
-      "src": "assets/foundation/photo-11.jpeg",
-      "caption": "Photo 11",
-      "category": "spaces",
-      "width": 1201,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-12.jpeg",
-      "caption": "Photo 12",
-      "category": "spaces",
-      "width": 1600,
-      "height": 1028
-    },
-    {
-      "src": "assets/foundation/photo-13.jpeg",
-      "caption": "Photo 13",
-      "category": "spaces",
-      "width": 1201,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-14.jpeg",
-      "caption": "Photo 14",
-      "category": "spaces",
-      "width": 1201,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-15.jpeg",
-      "caption": "Photo 15",
-      "category": "spaces",
-      "width": 1204,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-16.jpeg",
-      "caption": "Photo 16",
-      "category": "spaces",
-      "width": 1201,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-17.jpeg",
-      "caption": "Photo 17",
-      "category": "spaces",
-      "width": 1201,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-18.jpeg",
-      "caption": "Photo 18",
-      "category": "spaces",
-      "width": 1171,
-      "height": 1530
-    },
-    {
-      "src": "assets/foundation/photo-19.jpeg",
       "caption": "Photo 19",
       "category": "spaces",
       "width": 1201,
       "height": 1600
     },
     {
-      "src": "assets/foundation/photo-20.jpeg",
+      "src": "assets/foundation/photo-09.jpeg",
       "caption": "Photo 20",
+      "category": "spaces",
+      "width": 1232,
+      "height": 1448
+    },
+    {
+      "src": "assets/foundation/photo-10.jpeg",
+      "caption": "Photo 21",
+      "category": "spaces",
+      "width": 1232,
+      "height": 1595
+    },
+    {
+      "src": "assets/foundation/photo-11.jpeg",
+      "caption": "Photo 22",
+      "category": "spaces",
+      "width": 1201,
+      "height": 1600
+    },
+    {
+      "src": "assets/foundation/photo-12.jpeg",
+      "caption": "Photo 23",
+      "category": "spaces",
+      "width": 1600,
+      "height": 1028
+    },
+    {
+      "src": "assets/foundation/photo-13.jpeg",
+      "caption": "Photo 24",
+      "category": "spaces",
+      "width": 1201,
+      "height": 1600
+    },
+    {
+      "src": "assets/foundation/photo-14.jpeg",
+      "caption": "Photo 25",
+      "category": "spaces",
+      "width": 1201,
+      "height": 1600
+    },
+    {
+      "src": "assets/foundation/photo-15.jpeg",
+      "caption": "Photo 26",
+      "category": "spaces",
+      "width": 1204,
+      "height": 1600
+    },
+    {
+      "src": "assets/foundation/photo-16.jpeg",
+      "caption": "Photo 27",
+      "category": "spaces",
+      "width": 1201,
+      "height": 1600
+    },
+    {
+      "src": "assets/foundation/photo-17.jpeg",
+      "caption": "Photo 28",
+      "category": "spaces",
+      "width": 1201,
+      "height": 1600
+    },
+    {
+      "src": "assets/foundation/photo-18.jpeg",
+      "caption": "Photo 29",
+      "category": "spaces",
+      "width": 1171,
+      "height": 1530
+    },
+    {
+      "src": "assets/foundation/photo-19.jpeg",
+      "caption": "Photo 30",
+      "category": "spaces",
+      "width": 1201,
+      "height": 1600
+    },
+    {
+      "src": "assets/foundation/photo-20.jpeg",
+      "caption": "Photo 31",
       "category": "spaces",
       "width": 1600,
       "height": 1201
     },
     {
       "src": "assets/foundation/photo-21.jpeg",
-      "caption": "Photo 21",
+      "caption": "Photo 32",
       "category": "spaces",
       "width": 914,
       "height": 1549
     },
     {
       "src": "assets/foundation/photo-22.jpeg",
-      "caption": "Photo 22",
+      "caption": "Photo 33",
       "category": "spaces",
       "width": 1400,
       "height": 1232
     },
     {
       "src": "assets/foundation/photo-23.jpeg",
-      "caption": "Photo 23",
+      "caption": "Photo 34",
       "category": "spaces",
       "width": 1201,
       "height": 1600
     },
     {
       "src": "assets/foundation/photo-24.jpeg",
-      "caption": "Photo 24",
+      "caption": "Photo 35",
       "category": "community",
       "width": 1600,
       "height": 1200
     },
     {
       "src": "assets/foundation/photo-25.jpeg",
-      "caption": "Photo 25",
-      "category": "community",
-      "width": 1600,
-      "height": 1200
-    },
-    {
-      "src": "assets/foundation/photo-26.jpeg",
-      "caption": "Photo 26",
-      "category": "community",
-      "width": 1600,
-      "height": 1200
-    },
-    {
-      "src": "assets/foundation/photo-27.jpeg",
-      "caption": "Photo 27",
-      "category": "community",
-      "width": 1600,
-      "height": 1200
-    },
-    {
-      "src": "assets/foundation/photo-28.jpeg",
-      "caption": "Photo 28",
-      "category": "community",
-      "width": 1600,
-      "height": 1200
-    },
-    {
-      "src": "assets/foundation/photo-29.jpeg",
-      "caption": "Photo 29",
-      "category": "community",
-      "width": 1600,
-      "height": 1200
-    },
-    {
-      "src": "assets/foundation/photo-30.jpeg",
-      "caption": "Photo 30",
-      "category": "community",
-      "width": 1600,
-      "height": 1200
-    },
-    {
-      "src": "assets/foundation/photo-31.jpeg",
-      "caption": "Photo 31",
-      "category": "community",
-      "width": 1600,
-      "height": 1200
-    },
-    {
-      "src": "assets/foundation/photo-32.jpeg",
-      "caption": "Photo 32",
-      "category": "community",
-      "width": 1600,
-      "height": 1200
-    },
-    {
-      "src": "assets/foundation/photo-33.jpeg",
-      "caption": "Photo 33",
-      "category": "community",
-      "width": 1200,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-34.jpeg",
-      "caption": "Photo 34",
-      "category": "community",
-      "width": 1200,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-35.jpeg",
-      "caption": "Photo 35",
-      "category": "community",
-      "width": 1200,
-      "height": 1600
-    },
-    {
-      "src": "assets/foundation/photo-36.jpeg",
       "caption": "Photo 36",
       "category": "community",
       "width": 1600,
       "height": 1200
     },
     {
-      "src": "assets/foundation/photo-37.jpeg",
+      "src": "assets/foundation/photo-26.jpeg",
       "caption": "Photo 37",
       "category": "community",
       "width": 1600,
       "height": 1200
     },
     {
-      "src": "assets/foundation/photo-38.jpeg",
+      "src": "assets/foundation/photo-27.jpeg",
       "caption": "Photo 38",
       "category": "community",
       "width": 1600,
       "height": 1200
     },
     {
-      "src": "assets/foundation/photo-39.jpeg",
+      "src": "assets/foundation/photo-28.jpeg",
       "caption": "Photo 39",
       "category": "community",
-      "width": 1200,
-      "height": 1600
+      "width": 1600,
+      "height": 1200
     },
     {
-      "src": "assets/foundation/photo-40.jpeg",
+      "src": "assets/foundation/photo-29.jpeg",
       "caption": "Photo 40",
       "category": "community",
       "width": 1600,
       "height": 1200
     },
     {
-      "src": "assets/foundation/photo-41.jpeg",
+      "src": "assets/foundation/photo-30.jpeg",
       "caption": "Photo 41",
       "category": "community",
       "width": 1600,
       "height": 1200
     },
     {
-      "src": "assets/foundation/photo-42.jpeg",
+      "src": "assets/foundation/photo-32.jpeg",
       "caption": "Photo 42",
       "category": "community",
       "width": 1600,
       "height": 1200
     },
     {
-      "src": "assets/foundation/photo-43.jpeg",
+      "src": "assets/foundation/photo-33.jpeg",
       "caption": "Photo 43",
       "category": "community",
-      "width": 1600,
-      "height": 1200
+      "width": 1200,
+      "height": 1600
     },
     {
-      "src": "assets/foundation/photo-44.jpeg",
+      "src": "assets/foundation/photo-34.jpeg",
       "caption": "Photo 44",
       "category": "community",
-      "width": 1600,
-      "height": 1200
+      "width": 1200,
+      "height": 1600
     },
     {
-      "src": "assets/foundation/photo-45.jpeg",
+      "src": "assets/foundation/photo-35.jpeg",
       "caption": "Photo 45",
       "category": "community",
-      "width": 1600,
-      "height": 1200
+      "width": 1200,
+      "height": 1600
     },
     {
-      "src": "assets/foundation/photo-46.jpeg",
+      "src": "assets/foundation/photo-36.jpeg",
       "caption": "Photo 46",
       "category": "community",
       "width": 1600,
       "height": 1200
     },
     {
-      "src": "assets/foundation/photo-47.jpeg",
+      "src": "assets/foundation/photo-37.jpeg",
       "caption": "Photo 47",
+      "category": "community",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "src": "assets/foundation/photo-38.jpeg",
+      "caption": "Photo 48",
+      "category": "community",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "src": "assets/foundation/photo-39.jpeg",
+      "caption": "Photo 49",
+      "category": "community",
+      "width": 1200,
+      "height": 1600
+    },
+    {
+      "src": "assets/foundation/photo-40.jpeg",
+      "caption": "Photo 50",
+      "category": "community",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "src": "assets/foundation/photo-41.jpeg",
+      "caption": "Photo 51",
+      "category": "community",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "src": "assets/foundation/photo-43.jpeg",
+      "caption": "Photo 52",
+      "category": "community",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "src": "assets/foundation/photo-44.jpeg",
+      "caption": "Photo 53",
+      "category": "community",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "src": "assets/foundation/photo-45.jpeg",
+      "caption": "Photo 54",
+      "category": "community",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "src": "assets/foundation/photo-46.jpeg",
+      "caption": "Photo 55",
+      "category": "community",
+      "width": 1600,
+      "height": 1200
+    },
+    {
+      "src": "assets/foundation/photo-47.jpeg",
+      "caption": "Photo 56",
       "category": "community",
       "width": 1600,
       "height": 1200

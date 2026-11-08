@@ -46,6 +46,24 @@ assert(fs.existsSync("dist/.htaccess"), "Apache security headers missing");
 assert(fs.existsSync("dist/robots.txt"), "robots.txt missing");
 assert(fs.existsSync("dist/sitemap.xml"), "sitemap.xml missing");
 const media = JSON.parse(fs.readFileSync("src/media.json", "utf8"));
+const previews = JSON.parse(fs.readFileSync("src/image-assets.json", "utf8"));
+let originalsSize = 0;
+let previewSize = 0;
+for (const photo of media.photos) {
+  assert(previews[photo.src], `Missing responsive previews: ${photo.src}`);
+  for (const variant of previews[photo.src].srcSet.split(", ")) {
+    const file = variant.split(" ")[0];
+    assert(fs.existsSync(path.join("dist", file)), `Missing optimized image: ${file}`);
+  }
+  originalsSize += fs.statSync(path.join("dist", photo.src)).size;
+  previewSize += fs.statSync(path.join("dist", previews[photo.src].src)).size;
+}
+assert(previewSize < originalsSize * 0.4, "Gallery preview budget exceeded");
+for (const file of walk("dist/assets").filter((name) => name.endsWith(".js"))) {
+  for (const match of fs.readFileSync(file, "utf8").matchAll(/\b(?:from|import)\s*(?:\(\s*)?["'](\.\/[^"']+\.js)["']/g)) {
+    assert(fs.existsSync(path.join(path.dirname(file), match[1])), `Missing lazy chunk: ${match[1]}`);
+  }
+}
 for (const item of [...media.photos, ...media.videos]) {
   assert(
     fs.existsSync(path.join("dist", item.src)),

@@ -1,10 +1,47 @@
 /* A calm, consistent presentation for the foundation's own media. */
+.topbar { align-items: center; gap: 16px; flex-wrap: wrap; }
+.topbar > div { min-width: 0; }
+.topbar a { overflow-wrap: anywhere; }
+.contact-form input, .contact-form textarea { font-size: 16px !important; }
+.contact-form .button.light { margin-top: 12px; }
+.contact-panel, .video-player-spotlight > *, .section-head > *, .footer-main > * { min-width: 0; }
+.contact-email { overflow-wrap: anywhere; }
+.continuous-track-wrap:focus-within .continuous-track { animation-play-state: paused; }
+.continuous-slideshow-wrap.paused .continuous-track { will-change: auto; }
+.continuous-photo-card { touch-action: manipulation; }
+@media (hover: none), (pointer: coarse) {
+  .continuous-photo-card:hover, .service-card:hover, .button:hover { transform: none; }
+  header { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: #fff; }
+}
+@media (max-width: 950px) {
+  #primary-navigation { max-height: calc(100dvh - 155px); overflow-y: auto; overscroll-behavior: contain; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .continuous-slider-container { overflow-x: auto; }
+  .continuous-track { transform: none !important; will-change: auto; }
+  .continuous-track[aria-hidden="true"] { display: none; }
+}
+.page-intro {
+  background-color: #123e73;
+  background-image: linear-gradient(90deg, #08233e80, #08233e33 60%, transparent), url("/assets/page-banner.jpg");
+  background-size: cover;
+  background-position: right top;
+  background-repeat: no-repeat;
+}
+@media (max-width: 768px) {
+  .page-intro {
+    background-image: linear-gradient(90deg, #08233ed9, #08233e99), url("/assets/page-banner.jpg");
+    background-position: 60% top;
+  }
+}
 .hero.background-image-hero { width: calc(100% - 44px); max-width: 1600px; margin: 0 auto; min-height: 640px; display: flex; flex-direction: column; justify-content: center; }
-.background-image-hero .hero-background { object-position: center 10%; }
-.background-image-hero::before { background: linear-gradient(90deg, #0c2947f5 0%, #0c2947dc 28%, #0c294785 50%, #0c29470a 78%); }
+.background-image-hero .hero-background { left: auto; right: 0; width: 82%; object-position: center; mask-image: linear-gradient(90deg, transparent, #000 24%); }
+.background-image-hero::before { background: linear-gradient(90deg, #092a43 0%, #092a43f5 17%, #092a43c7 30%, #092a4352 43%, #092a430a 53%, transparent 63%); }
 .background-image-hero .hero-copy { max-width: 660px; padding: 60px 5%; }
 .background-image-hero h1 { font-size: clamp(42px, 5.5vw, 84px); line-height: 1.08; }
-.background-image-hero .hero-note { background: #102c49c9; border-radius: 0 6px 6px 0; padding: 12px 18px; }
+.background-image-hero .hero-note { background: #102c49d9; border: 1px solid #ffffff40; border-radius: 6px; padding: 16px 20px; }
 .contact-with-form { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: start; }
 .contact-panel { min-width: 0; }
 .contact-form { padding: clamp(20px, 3vw, 32px); background: #f4f6f9; border: 1px solid var(--line); border-radius: 12px; }
@@ -39,7 +76,7 @@
 @media (max-width: 650px) {
   .hero.background-image-hero { width: calc(100% - 24px); min-height: 660px; justify-content: space-between; }
   .background-image-hero .hero-copy { padding: 40px 7% 24px; }
-  .background-image-hero .hero-background { object-position: 40% center; }
+  .background-image-hero .hero-background { width: 100%; object-position: 58% center; mask-image: none; }
   .background-image-hero::before { background: linear-gradient(90deg, #0c2947e8, #0c29479c), linear-gradient(0deg, #0c2947cc, transparent 45%); }
   .background-image-hero .hero-note { align-self: start; margin: 0 7% 28px; }
   .contact-form-grid, .contact-panel .contact-details { grid-template-columns: 1fr; }
@@ -503,6 +540,10 @@ button.qr-download:hover {
   object-fit: cover;
   display: block;
   border-radius: 8px;
+}
+[data-photo-row="new-photos"] .continuous-photo-card img {
+  object-fit: contain;
+  background: #e8edf3;
 }
 .slideshow-hint {
   text-align: center;
@@ -1422,3 +1463,8 @@ dialog#lightbox img {
 
 
 
+
+/* Avoid double offset from scroll-padding plus section scroll-margin. */
+html { scroll-padding-top: 0; }
+section[id], div[id], main[id] { scroll-margin-top: 105px; }
+@media (max-width: 650px) { section[id], div[id], main[id] { scroll-margin-top: 85px; } }

@@ -1,10 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
-import ServicesPage from "./pages/ServicesPage";
-import GalleryPage from "./pages/GalleryPage";
-import ContactPage from "./pages/ContactPage";
 import media from "./media.json";
 import "./style.css";
 import "./refinements.css";
@@ -17,11 +12,11 @@ const links = [
   ["contact.html", "Contact us"],
 ];
 const pages = {
-  index: HomePage,
-  about: AboutPage,
-  services: ServicesPage,
-  gallery: GalleryPage,
-  contact: ContactPage,
+  index: lazy(() => import("./pages/HomePage")),
+  about: lazy(() => import("./pages/AboutPage")),
+  services: lazy(() => import("./pages/ServicesPage")),
+  gallery: lazy(() => import("./pages/GalleryPage")),
+  contact: lazy(() => import("./pages/ContactPage")),
 };
 const requestedPage =
   location.pathname
@@ -30,13 +25,24 @@ const requestedPage =
     .at(-1)
     ?.replace(/\.html$/, "") || "index";
 const pageName = Object.hasOwn(pages, requestedPage) ? requestedPage : "index";
-const CurrentPage = pages[pageName] || HomePage;
+const CurrentPage = pages[pageName];
+const scrollBehavior = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
+
+function PageContent(props) {
+  useEffect(() => {
+    // Run after the lazy page commits, so cross-page donation/gallery anchors exist.
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+    if (id) document.getElementById(id)?.scrollIntoView({ behavior: "instant", block: "start" });
+  }, []);
+  return <CurrentPage {...props} />;
+}
 
 function Brand() {
   function handleClick(e) {
     if (pageName === "index") {
       e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: scrollBehavior() });
       if (location.hash) {
         history.replaceState(null, "", "index.html");
       }
@@ -44,7 +50,7 @@ function Brand() {
   }
   return (
     <a className="brand" href="index.html" onClick={handleClick}>
-      <img src="assets/logo.png" alt="Sri Sadguru logo" />
+      <img src="assets/logo.png" alt="Sri Sadguru logo" width="57" height="57" />
       <span>
         Sri Sadguru<small>AADHAR FOUNDATION</small>
       </span>
@@ -64,7 +70,7 @@ function NavigationLinks() {
         onClick={(e) => {
           if (isCurrent) {
             e.preventDefault();
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            window.scrollTo({ top: 0, behavior: scrollBehavior() });
             if (location.hash) {
               history.replaceState(null, "", href);
             }
@@ -111,17 +117,23 @@ function App() {
       : -1;
 
   useEffect(() => {
+    let frame;
     const handleScroll = () => {
-      const y = window.scrollY || document.documentElement.scrollTop;
-      setScrolled(y > 20);
-      setShowScrollTop(y > 350);
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        const y = window.scrollY;
+        setScrolled(y > 20);
+        setShowScrollTop(y > 350);
+        frame = undefined;
+      });
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => { window.removeEventListener("scroll", handleScroll); cancelAnimationFrame(frame); };
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: scrollBehavior() });
   };
 
   useEffect(() => {
@@ -136,13 +148,11 @@ function App() {
       if (id) {
         const el = document.getElementById(id);
         if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          el.scrollIntoView({ behavior: "instant", block: "start" });
         }
       }
     };
-    if (location.hash) {
-      requestAnimationFrame(scrollToFragment);
-    }
+    // Initial scrolling happens in PageContent after its lazy page has mounted.
     window.addEventListener("hashchange", scrollToFragment);
     return () => {
       window.removeEventListener("hashchange", scrollToFragment);
@@ -152,27 +162,23 @@ function App() {
   // Global smooth scrolling for all in-page hash anchor links
   useEffect(() => {
     function handleAnchorClick(event) {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       const link = event.target.closest("a");
-      if (!link) return;
+      if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
       const href = link.getAttribute("href");
       if (!href) return;
 
-      let targetId = null;
-      if (href.startsWith("#") && href.length > 1) {
-        targetId = href.slice(1);
-      } else if (pageName === "index" && href.includes("#")) {
-        const hashIdx = href.indexOf("#");
-        const candidate = href.slice(hashIdx + 1);
-        if (candidate && document.getElementById(candidate)) {
-          targetId = candidate;
-        }
-      }
+      const url = new URL(href, location.href);
+      const normalize = (path) => path.replace(/index\.html$/, "");
+      if (url.origin !== location.origin || normalize(url.pathname) !== normalize(location.pathname) || url.search !== location.search) return;
+      let targetId;
+      try { targetId = decodeURIComponent(url.hash.slice(1)); } catch { return; }
 
       if (targetId) {
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
           event.preventDefault();
-          targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          targetElement.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
           history.pushState(null, "", `#${targetId}`);
           setMenuOpen(false);
         }
@@ -263,6 +269,7 @@ function App() {
   }
 
   function openVideo(nextVideo) {
+    document.querySelectorAll("video").forEach((video) => video.pause());
     lastMediaTrigger.current = document.activeElement;
     setModalItem({
       type: "video",
@@ -289,6 +296,7 @@ function App() {
           <a href="mailto:srisadguruaadharfoundation26@gmail.com">srisadguruaadharfoundation26@gmail.com</a>
           <span aria-hidden="true">·</span>
           <a href="tel:+918147942784">Let’s talk: +91 81479 42784</a>
+          <a href="tel:+919591251111">+91 95912 51111</a>
         </div>
       </div>
       <header ref={headerRef} className={scrolled ? "scrolled" : undefined}>
@@ -315,7 +323,7 @@ function App() {
             onClick={(e) => {
               if (pageName === "index") {
                 e.preventDefault();
-                document.getElementById("for-healthcare")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                document.getElementById("for-healthcare")?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
                 history.pushState(null, "", "#for-healthcare");
               }
             }}
@@ -328,7 +336,7 @@ function App() {
             onClick={(e) => {
               if (pageName === "index") {
                 e.preventDefault();
-                document.getElementById("donate")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                document.getElementById("donate")?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
                 history.pushState(null, "", "#donate");
               }
             }}
@@ -337,7 +345,9 @@ function App() {
           </a>
         </nav>
       </header>
-      <CurrentPage onOpenImage={openImage} onOpenVideo={openVideo} />
+      <Suspense fallback={<main id="main" className="section" role="status">Loading page…</main>}>
+        <PageContent onOpenImage={openImage} onOpenVideo={openVideo} />
+      </Suspense>
       {showScrollTop && (
         <button
           className="scroll-top-btn"
@@ -405,7 +415,7 @@ function App() {
         </button>
         {modalItem && modalItem.type === "image" && (
           <>
-            <img src={modalItem.src} alt="" />
+            <img src={modalItem.src} alt={modalItem.caption || "Foundation photo"} decoding="async" />
             <div className="lightbox-caption">
               {modalItem.caption && !/^Photo\s+\d+$/i.test(modalItem.caption) && (
                 <p>{modalItem.caption}</p>

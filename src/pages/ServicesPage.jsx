@@ -45,6 +45,8 @@ export default function ServicesPage({ onOpenImage }) {
         </div>
         <img
           src="assets/services-brochure.png"
+          width="595"
+          height="842"
           alt="Foundation rehabilitation services brochure"
           loading="lazy"
         />

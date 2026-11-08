@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { submitEnquiry } from "../contact-submit";
 
 // Google Apps Script Web App URL loaded from environment variable with fallback
 const GOOGLE_SCRIPT_URL =
@@ -12,6 +13,7 @@ export default function ContactForm() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (status === "submitting") return;
     const form = event.currentTarget;
     const values = new FormData(form);
     const first = values.get("firstName")?.toString().trim() || "";
@@ -46,24 +48,18 @@ export default function ContactForm() {
       submittedAt: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
     };
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     try {
-      if (GOOGLE_SCRIPT_URL) {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload),
-        });
-      }
-      // Small delay for UI smoothness
-      await new Promise((resolve) => setTimeout(resolve, 400));
+      await submitEnquiry(GOOGLE_SCRIPT_URL, payload, { signal: controller.signal });
       setSubmittedData(payload);
       setStatus("success");
     } catch (err) {
-      console.error("Submission error:", err);
-      // Even if network fails, preserve data so user can send via WhatsApp or retry
       setSubmittedData(payload);
-      setStatus("success");
+      setError("We couldn’t confirm delivery. Your details are still here. Please retry or send your enquiry through WhatsApp.");
+      setStatus("error");
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
@@ -166,6 +162,9 @@ export default function ContactForm() {
           <button className="button green" type="submit" disabled={status === "submitting"}>
             {status === "submitting" ? "Sending enquiry..." : "Submit enquiry"}
           </button>
+          {status === "error" && submittedData && (
+            <a className="button light" href={`https://wa.me/918147942784?text=${encodeURIComponent(whatsappText)}`} target="_blank" rel="noopener noreferrer">Send through WhatsApp ↗</a>
+          )}
         </form>
       )}
     </div>
